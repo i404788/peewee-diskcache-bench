@@ -7,9 +7,8 @@ The benchmark runs multiple scenarios:
   * Peewee's `KeyValue` supports (concurrent) bisected operations (set, get, del)
   * `diskcache`'s supports `transact`ions 
 * A multi-key-value store where multiple keys may reference the same value
-  * [TODO]
-* A key-document store where the document is queried (diskcache using an index, dataset using sqlite)
-  * [TODO]
+* ~A key-document store where the document is queried (diskcache using an index, dataset using sqlite)~
+  
 
 Both size & speed will be tested.
 
@@ -284,3 +283,23 @@ dataset-kv-get-range: Mean +- std dev: 161 us +- 2 us
 Storage usage: 100KB std: 0KB
 ```
 </details>
+
+### Multi-key/value
+```
+peewee-mkv-serial-insert: Mean +- std dev: 220 ms +- 3 ms
+peewee-mkv-serial-insert-transaction: Mean +- std dev: 177 ms +- 4 ms
+peewee-mkv-batch-insert: Mean +- std dev: 33.7 ms +- 1.3 ms
+peewee-mkv-batch-insert-indexed: Mean +- std dev: 35.5 ms +- 1.3 ms
+peewee-mkv-serial-read: Mean +- std dev: 345 ms +- 3 ms
+peewee-mkv-serial-read-indexed: Mean +- std dev: 349 ms +- 4 ms
+peewee-mkv-raw-serial-read: Mean +- std dev: 16.9 ms +- 0.3 ms
+peewee-mkv-raw-serial-read-indexed: Mean +- std dev: 16.9 ms +- 0.3 ms
+peewee-mkv-batch-read: Mean +- std dev: 24.4 ms +- 0.4 ms
+peewee-mkv-batch-read-indexed: Mean +- std dev: 24.7 ms +- 0.6 ms
+
+diskcache-mkv-insert: Mean +- std dev: 111 ms +- 2 ms
+diskcache-mkv-read: Mean +- std dev: 33.9 ms +- 0.4 ms
+```
+
+While peewee can be faster, for unbatched queries it's significantly slower; additionally raw SQL is ~20x faster.
+Additionally in the process of making the benchmark I found significant footguns in the querying system used by peewee (invalid syntax being accepted).
